@@ -28,7 +28,7 @@ app.configure('production', function(){
 // Routes
 app.get('/', ArticlesController().index);
 app.get(new RegExp(/^(\/articles)(\/)?$/), ArticlesController().index);
-app.get('/articles/create', ArticlesController().create);
+app.get(new RegExp(/^(\/articles\/create)(\/)?$/), ArticlesController().create);
 app.get('/articles/destroy/:id', ArticlesController().destroy);
 
 
