@@ -1,79 +1,46 @@
-
-var ArticleModel = function() {
+var Connection = require("../config/database.js").Connection;
+var Article = function() {
 
   var that = {};
-  
+  that.db = Connection().db();
+  that.table = 'articles';
+
+  // Define attributes here. make sure to add the save and delete methods
+  that.new = function() {
+    return {
+      title: null,
+      content: null,
+      save: that.save
+    };
+  };
+
   that.getCollection = function(callback) {
-    that.db.collection('articles', function(error, article_collection) {
-      if (error) {
-        callback(error);
-      } else {
-        callback(null, article_collection); 
-      }
+    that.db.collection(that.table, function(error, collection) {
+      collection.find().toArray(function(error, articles){
+        callback(error, articles);
+      });
     });
   };
 
-  that.findAll = function(callback) {
-    that.getCollection(function(error, article_collection) {
-      if (error) {
-        callback(error);
-      } else {
-        article_collection.find().toArray(function(error, results) {
-          if (error) { 
-            callback(error); 
-          } else { 
-            callback(null, results);
-          }
-        });
-      }
+  that.all = function(callback) {
+    var result = {};
+    that.getCollection(function(error, articles) {
+      result.error = error;
+      result.articles = articles;
+      callback(result);
     });
   };
 
-  that.findById = function(id, callback) {
-    that.getCollection(function(error, article_collection) {
-      if (error) {
-        callback(error);
-      } else {
-        article_collection.findOne({_id: article_collection.db.bson_serializer.ObjectID.createFromHexString(id)}, function(error, result) {
-          if (error) { 
-            callback(error); 
-          } else {
-            callback(null, result);
-          }
-        });
-      }
+  that.save = function() {
+    var article = this;
+    article.createdAt = new Date();
+    that.db.collection(that.table, function(error, collection){
+      collection.insert([article], function(){});
     });
   };
-
-  that.save = function(articles, callback) {
-    that.getCollection(function(error, article_collection) {
-      if (error) { 
-        callback(error);
-      } else {
-        if (typeof(articles.length)=="undefined") {
-          articles = [articles];
-        }
-        for (var i = 0;i < articles.length; i++ ) {
-          article = articles[i];
-          article.created_at = new Date();
-          if (article.comments === undefined ) {
-            article.comments = [];
-          }
-          for(var j = 0; j < article.comments.length; j++) {
-            article.comments[j].created_at = new Date();
-          }
-        }
-
-        article_collection.insert(articles, function() {
-          callback(null, articles);
-        });
-      }
-    });
-
-  };
+  
 
   return that;
 };
 
-// Make it available to exports
-exports.ArticleModel = ArticleModel;
+exports.Article = Article;

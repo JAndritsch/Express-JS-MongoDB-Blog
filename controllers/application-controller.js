@@ -1,10 +1,13 @@
 var ApplicationController = function() {
-  var that = {};
+  var controller = {};
 
-  that.index = function(req, res) {
-    res.render('index', { title: 'Express' })
+  // define global actions here. these will be in every controller
+  
+  // a before filter
+  controller.before = function(callback) {
+    callback();
   };
-  return that;
+  return controller;
 };
 
 exports.ApplicationController = ApplicationController;

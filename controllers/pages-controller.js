@@ -1,15 +1,24 @@
+
+var ApplicationController = require('../controllers/application-controller.js').ApplicationController
+
 var PagesController = function() {
-  var that = {};
-  that.viewsPath = "pages/";
+  var controller = new ApplicationController();
+  controller.viewsPath = "pages/";
 
-  that.view = function(name) {
-    return that.viewsPath + name;
+   
+  controller.index = function(req, res) {
+    res.render(viewPath('index'), { title: "Home page" });
   };
 
-  that.show = function(req, res) {
-    res.render(that.view('index'), { title: 'Pages: ' + req.params.name })
+  controller.show = function(req, res) {
+    res.render(viewPath('show'), { title: 'Pages: ' + req.params.name })
   };
-  return that;
+
+  var viewPath = function(name) {
+    return controller.viewsPath + name;
+  };
+
+  return controller;
 };
 
 exports.PagesController = PagesController;
