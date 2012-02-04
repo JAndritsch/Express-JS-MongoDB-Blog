@@ -25,6 +25,7 @@ app.configure('production', function(){
   app.use(express.errorHandler()); 
 });
 
+
 app.resources = function(name, controller) {
   this.get("/" + name, controller().index);
   this.get("/" + name + "/new", controller().new);

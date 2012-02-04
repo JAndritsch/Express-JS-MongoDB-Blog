@@ -8,6 +8,7 @@ var MongoModel = function() {
 
   var that = {};
   that.db = Connection().db();
+  that.objectID = Connection().ObjectID;
 
   /*
   * opts types:
@@ -38,19 +39,20 @@ var MongoModel = function() {
   };
 
   // Save the new doc
-  that.save = function() {
-    var doc = this;
+  that.save = function(doc, callback) {
     doc.createdAt = new Date();
     that.db.collection(that.table, function(error, collection){
-      collection.insert([doc], function(){});
+      collection.insert([doc], function(error, results){
+        callback(error, results);
+      });
     });
   };
 
-  // Update the doc - NOT WORKING YET
-  that.update = function() {
-    var doc = this;
+  // Update the doc - NOT WORKING YET, need to add callback 
+  that.update = function(doc, callback) {
+    doc.updatedAt = new Date();
     that.db.collection(that.table, function(error, collection) {
-      collection.update({_id: collection.db.bson_serializer.ObjectID.createFromHexString(doc._id)}, doc, null, false);
+      collection.update({_id: new that.objectID(doc._id)}, doc);
     });
   };
 
@@ -58,20 +60,20 @@ var MongoModel = function() {
   that.find = function(id, callback) {
     var result = {};
     that.db.collection(that.table, function(error, collection) {
-      collection.findOne({_id: collection.db.bson_serializer.ObjectID.createFromHexString(id)}, function(error, doc) {
+      collection.findOne({_id: new that.objectID(id)}, function(error, doc) {
         result.error = error;
         result.doc = doc;
-        result.doc.destroy = that.destroy;
         callback(result);
       });
     });
   };
 
   // Destroy a doc
-  that.destroy = function() {
-    var doc = this;
+  that.destroy = function(doc, callback) {
     that.db.collection(that.table, function(error, collection) {
-      collection.remove({_id: doc._id});
+      collection.remove({_id: doc._id}, function(error, results) {
+        callback(error, results);
+      });
     });
   };
 

@@ -5,3 +5,8 @@ br/
 p= article.createdAt
 br/
 p= article.content
+br/
+br/
+p
+   a(href="/articles/edit/#{article._id}") Edit | 
+   a(href="/articles/destroy/#{article._id}") Delete

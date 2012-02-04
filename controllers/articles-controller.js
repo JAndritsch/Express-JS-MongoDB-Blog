@@ -62,9 +62,14 @@ var ArticlesController = function() {
       article.title = title;
       article.content = content;
       article._id = _id;
-      article.update();
+      Article().update(article, function(error, results) {
+        console.log("error: ", error);
+        console.log("reults: ", results);
+        res.redirect("/articles/show/" + article._id);
+      });
+    } else {
+      console.log("didn't update doc");
     }
-    res.redirect("/articles/show/" + article._id);
   };
 
   controller.create = function(req, res) {
@@ -75,11 +80,12 @@ var ArticlesController = function() {
     if (title && content) {
       article.title = title;
       article.content = content;
-      article.save();
+      Article().save(article, function(error, result) {
+        res.redirect('/articles/show/' + article._id);
+      });
     } else {
-      console.log("title and/or content were blank!");
+      res.redirect("/articles/new");
     }
-    res.redirect('/articles/show/' + article._id);
   };
 
   controller.destroy = function(req, res) {
@@ -87,11 +93,14 @@ var ArticlesController = function() {
       Article().find(req.params.id, function(result) {
         var article = result.doc;
         if (article) {
-          article.destroy();
+          Article().destroy(article, function(error, result) {
+            res.redirect('/articles');
+          });
+        } else {
+            console.log("something failed with the delete");
         }
       });
     };
-    res.redirect('/articles');
   };
 
   var viewPath = function(name) {
