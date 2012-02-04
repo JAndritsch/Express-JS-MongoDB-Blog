@@ -36,6 +36,14 @@ var MongoModel = function() {
     });
   };
 
+  // Update the doc - NOT WORKING YET
+  that.update = function() {
+    var doc = this;
+    that.db.collection(that.table, function(error, collection) {
+      collection.update({_id: collection.db.bson_serializer.ObjectID.createFromHexString(doc._id)}, doc, null, false);
+    });
+  };
+
   // Find a doc by ID
   that.find = function(id, callback) {
     var result = {};

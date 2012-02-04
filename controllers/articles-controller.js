@@ -14,15 +14,62 @@ var ArticlesController = function() {
     });
   };
 
+  controller.show = function(req, res) {
+    if (req.params.id) {
+      Article().find(req.params.id, function(result) {
+        var article = result.doc;
+        if (article) {
+          res.render(viewPath('show'), {
+            article: article
+          });
+        } else {
+          res.redirect("/articles");
+        }
+      });
+    };
+
+  };
+
   controller.new = function(req, res) {
-    res.render(viewPath('new'), {
-    });
+    res.render(viewPath('new'), {});
+  };
+
+  controller.edit = function(req, res) {
+    if (req.params.id) {
+      Article().find(req.params.id, function(result) {
+        var article = result.doc;
+        if (article) {
+          res.render(viewPath('edit'), {
+            article: article
+          });
+        } else {
+          res.redirect("/articles");
+        }
+      });
+    };
+  };
+
+  controller.update = function(req, res) {
+    var article = Article().new();
+    var title = req.body.title;
+    var content = req.body.content;
+    var _id = req.body.id;
+    
+
+    if (title && content && _id) {
+      article.title = title;
+      article.content = content;
+      article._id = _id;
+      console.log("here is the new article right before saving: ", article);
+      article.update();
+    }
+    res.redirect("/articles/show/" + article._id);
   };
 
   controller.create = function(req, res) {
     var article = Article().new();
-    var title = req.query.title;
-    var content = req.query.content;
+    var title = req.body.title;
+    var content = req.body.content;
 
     if (title && content) {
       article.title = title;
@@ -31,7 +78,7 @@ var ArticlesController = function() {
     } else {
       console.log("title and/or content were blank!");
     }
-    res.redirect('/articles');
+    res.redirect('/articles/show/' + article._id);
   };
 
   controller.destroy = function(req, res) {

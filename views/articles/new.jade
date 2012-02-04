@@ -1,1 +1,18 @@
 h3 New Article
+form(method="post", action="/articles")
+  label Title
+  br/
+  input(type="text", name="title")
+  br/
+
+  br/
+
+  label Content
+  br/
+  br/
+  textarea(rows="25", cols="40", name="content")
+  br/
+
+  br/
+
+  input(type="submit", value="Create")

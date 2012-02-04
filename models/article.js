@@ -10,7 +10,8 @@ var Article = function() {
     return {
       title: null,
       content: null,
-      save: that.save
+      save: that.save,
+      update: that.update
     };
   };
 

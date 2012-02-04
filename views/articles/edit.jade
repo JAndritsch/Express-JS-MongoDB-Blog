@@ -1,0 +1,20 @@
+h3 Update Article
+form(method="post", action="/articles/update")
+  input(type="hidden", name="id", value="#{article._id}")
+  label Title
+  br/
+  input(type="text", name="title", value="#{article.title}")
+  br/
+
+  br/
+
+  label Content
+  br/
+  br/
+  textarea(rows="25", cols="40", name="content")
+    = article.content
+  br/
+
+  br/
+
+  input(type="submit", value="Update")

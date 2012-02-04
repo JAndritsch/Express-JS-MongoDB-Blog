@@ -5,5 +5,8 @@ br/
   h4= article.title
   div= article.createdAt
   p= article.content
-  p= article._id
+  p
+   a(href="/articles/edit/#{article._id}") Edit
+  p
+   a(href="/articles/destroy/#{article._id}") Delete
   br/

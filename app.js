@@ -31,8 +31,8 @@ app.resources = function(name, controller) {
   this.post("/" + name, controller().create);
   this.get("/" + name + "/show/:id", controller().show);
   this.get("/" + name + "/edit/:id", controller().edit);
-  this.put("/" + name, controller().update);
-  this.put("/" + name + "/destroy/:id", controller().destroy);
+  this.post("/" + name + "/update", controller().update);
+  this.get("/" + name + "/destroy/:id", controller().destroy);
 };
 
 // Routes
