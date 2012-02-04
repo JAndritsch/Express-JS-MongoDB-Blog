@@ -5,7 +5,7 @@ var Article = function() {
   var that = MongoModel();
   that.table = 'articles';
 
-  // Define attributes here. make sure to add the save method to 'new'
+  // Define attributes here. make sure to add 'save' and 'update' methods here
   that.new = function() {
     return {
       title: null,

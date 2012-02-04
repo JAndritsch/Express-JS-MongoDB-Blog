@@ -9,18 +9,28 @@ var MongoModel = function() {
   var that = {};
   that.db = Connection().db();
 
-  that.getCollection = function(callback) {
+  /*
+  * opts types:
+  *   sort: {key: "order"} * Note: Mongo sorts using 1, -1 for asc, desc
+  *   where: {key: "value", anotherKey: "anotherValue"} for specific fields 
+  *     or $where: "this.key.match(/^someRegEx$/i)" for an expression
+  *   limit: x, x = number returned
+  *   skip: x, x = at what index to start returning results
+  *       ** skip and limit are best used together for pagination
+  */
+  that.getCollection = function(opts, callback) {
     that.db.collection(that.table, function(error, collection) {
-      collection.find().toArray(function(error, docs){
+      collection.find(opts.where).skip(opts.skip).limit(opts.limit).sort(opts.sort).toArray(function(error, docs){
         callback(error, docs);
       });
     });
   };
 
-  // Return ALL docs
-  that.all = function(callback) {
+  // Return ALL docs. Makes use of getCollection for passing in options to the query such as sorting, where clauses
+  // limits, etc...
+  that.all = function(opts, callback) {
     var result = {};
-    that.getCollection(function(error, docs) {
+    that.getCollection(opts, function(error, docs) {
       result.error = error;
       result.docs = docs;
       callback(result);

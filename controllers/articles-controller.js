@@ -7,7 +7,10 @@ var ArticlesController = function() {
    
 
   controller.index = function(req, res) {
-    Article().all(function(result) {
+    var opts = {
+      order: {createdAt: -1}
+    };
+    Article().all(opts, function(result) {
       res.render(viewPath('index'), { 
         articles: result.docs
       });
@@ -54,13 +57,11 @@ var ArticlesController = function() {
     var title = req.body.title;
     var content = req.body.content;
     var _id = req.body.id;
-    
 
     if (title && content && _id) {
       article.title = title;
       article.content = content;
       article._id = _id;
-      console.log("here is the new article right before saving: ", article);
       article.update();
     }
     res.redirect("/articles/show/" + article._id);
