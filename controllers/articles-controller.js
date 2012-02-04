@@ -9,9 +9,13 @@ var ArticlesController = function() {
   controller.index = function(req, res) {
     Article().all(function(result) {
       res.render(viewPath('index'), { 
-        title: "My Blog",
         articles: result.docs
       });
+    });
+  };
+
+  controller.new = function(req, res) {
+    res.render(viewPath('new'), {
     });
   };
 
