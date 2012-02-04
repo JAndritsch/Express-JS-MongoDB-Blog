@@ -4,6 +4,8 @@ var express = require('express')
   ;
    
 var connection = require("./config/database.js").Connection;
+connection().open();
+
 var app = module.exports = express.createServer();
 
 app.configure(function(){
@@ -18,7 +20,6 @@ app.configure(function(){
 
 app.configure('development', function(){
   app.use(express.errorHandler({ dumpExceptions: true, showStack: true })); 
-  connection().open();
 });
 
 app.configure('production', function(){
