@@ -1,8 +1,3 @@
-
-/**
- * Module dependencies.
- */
-
 var express = require('express')
   , ApplicationController = require('./controllers/application-controller.js').ApplicationController
   , PagesController = require('./controllers/pages-controller.js').PagesController
@@ -10,9 +5,6 @@ var express = require('express')
    
 var connection = require("./config/database.js").Connection;
 var app = module.exports = express.createServer();
-
-
-// Configuration
 
 app.configure(function(){
   app.set('views', __dirname + '/views');
@@ -37,5 +29,7 @@ app.configure('production', function(){
 app.get('/', ApplicationController().index);
 app.get('/pages/:name', PagesController().show);
 
+
+// Port settings
 app.listen(3000);
 console.log("Express server listening on port %d in %s mode", app.address().port, app.settings.env);
