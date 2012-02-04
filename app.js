@@ -1,6 +1,6 @@
 var express = require('express')
   , PagesController = require('./controllers/pages-controller.js').PagesController
-  , BlogController = require('./controllers/blog-controller.js').BlogController
+  , ArticlesController = require('./controllers/articles-controller.js').ArticlesController
   ;
    
 var connection = require("./config/database.js").Connection;
@@ -30,11 +30,12 @@ app.configure('production', function(){
 app.get('/', PagesController().index);
 app.get(new RegExp(/^(\/pages)(\/)?$/), PagesController().index);
 app.get('/pages/:name', PagesController().show);
-app.get(new RegExp(/^(\/blog)(\/)?$/), BlogController().index);
+app.get(new RegExp(/^(\/articles)(\/)?$/), ArticlesController().index);
 
 // ideally this will be a post, but just a get for testing
-app.get('/blog/create', BlogController().create);
+app.get('/articles/create', ArticlesController().create);
 
+app.get('/articles/destroy/:id', ArticlesController().destroy);
 
 
 // Port settings

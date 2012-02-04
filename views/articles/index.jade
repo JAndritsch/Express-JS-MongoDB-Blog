@@ -1,0 +1,11 @@
+h1= title
+
+h3 Latest articles
+br/
+
+- each article in articles
+  h4= article.title
+  div= article.createdAt
+  p= article.content
+  p= article._id
+  br/

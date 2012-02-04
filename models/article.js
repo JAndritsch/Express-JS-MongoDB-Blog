@@ -38,7 +38,26 @@ var Article = function() {
       collection.insert([article], function(){});
     });
   };
-  
+
+  that.find = function(id, callback) {
+    var result = {};
+    that.db.collection(that.table, function(error, collection) {
+      collection.findOne({_id: collection.db.bson_serializer.ObjectID.createFromHexString(id)}, function(error, article) {
+        result.error = error;
+        result.article = article;
+        result.article.destroy = that.destroy;
+        callback(result);
+      });
+    });
+  };
+
+  that.destroy = function() {
+    var article = this;
+    that.db.collection(that.table, function(error, collection) {
+      collection.remove({_id: article._id});
+    });
+  };
+
 
   return that;
 };
