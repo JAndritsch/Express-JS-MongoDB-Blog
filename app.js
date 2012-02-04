@@ -1,5 +1,4 @@
 var express = require('express')
-  , PagesController = require('./controllers/pages-controller.js').PagesController
   , ArticlesController = require('./controllers/articles-controller.js').ArticlesController
   ;
    
@@ -27,14 +26,9 @@ app.configure('production', function(){
 });
 
 // Routes
-app.get('/', PagesController().index);
-app.get(new RegExp(/^(\/pages)(\/)?$/), PagesController().index);
-app.get('/pages/:name', PagesController().show);
+app.get('/', ArticlesController().index);
 app.get(new RegExp(/^(\/articles)(\/)?$/), ArticlesController().index);
-
-// ideally this will be a post, but just a get for testing
 app.get('/articles/create', ArticlesController().create);
-
 app.get('/articles/destroy/:id', ArticlesController().destroy);
 
 

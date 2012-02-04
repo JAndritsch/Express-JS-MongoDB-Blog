@@ -1,4 +1,3 @@
-
 var ApplicationController = require('../controllers/application-controller.js').ApplicationController
 var Article = require('../models/article.js').Article;
 
@@ -11,7 +10,7 @@ var ArticlesController = function() {
     Article().all(function(result) {
       res.render(viewPath('index'), { 
         title: "My Blog",
-        articles: result.articles
+        articles: result.docs
       });
     });
   };
@@ -34,7 +33,7 @@ var ArticlesController = function() {
   controller.destroy = function(req, res) {
     if (req.params.id) {
       Article().find(req.params.id, function(result) {
-        var article = result.article;
+        var article = result.doc;
         if (article) {
           article.destroy();
         }
