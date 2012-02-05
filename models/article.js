@@ -6,8 +6,9 @@ var Article = function() {
   that.table = 'articles';
 
   // setup validations
-  that.addValidation("title.length > 0");
-  that.addValidation("content.length > 0");
+  that.validates("title.length > 0");
+  that.validates("content.length > 0");
+  that.validatesUniquenessOf("title");
 
   return that;
 };

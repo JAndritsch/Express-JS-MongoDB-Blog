@@ -10,6 +10,7 @@ var MongoModel = function() {
   that.db = Connection().db();
   that.objectID = Connection().ObjectID;
   that.validations = [];
+  that.uniqueAttributes = [];
   that.errors = [];
 
   /*
@@ -44,7 +45,7 @@ var MongoModel = function() {
   that.save = function(doc, callback) {
     doc.createdAt = new Date();
     that.db.collection(that.table, function(error, collection){
-      if (that.isValid(doc)) {
+      if (that.validationsPass(doc)) {
         collection.insert([doc], function(error, results){
           callback(error, results);
         });
@@ -83,28 +84,58 @@ var MongoModel = function() {
     });
   };
 
-  that.isValid = function(doc) {
-    var currentRule;
-    var evalString;
-    for (var i = 0; i < that.validations.length; i++) {
-      currentRule = that.validations[i]; 
-      evalString = "doc." + currentRule; 
-      if (!eval(evalString)) {
-        that.errors.push("Validation failed on '" + evalString + "'");
-      }
-    }
+  that.validationsPass = function(doc) {
+    that.runValidations(doc); 
+    that.runUniquenessCheck(doc);
     if (that.errors.length == 0) {
       return true;
     }
     return false;
   };
+  
+  that.runValidations = function(doc) {
+    var currentRule;
+    var evalString;
+    var currentUniqueAttr;
+    for (var i = 0; i < that.validations.length; i++) {
+      currentRule = that.validations[i]; 
+      evalString = "doc." + currentRule; 
+      if (!eval(evalString)) {
+        that.errors.push("Validation failed on '" + evalString.replace("doc.", "") + "'");
+      }
+    }
+  };
+
+  that.runUniquenessCheck = function(doc) {
+    for (var i = 0; i < that.uniqueAttributes.length; i++) {
+      var opts = {};
+      var key, val;
+      var pair = {};
+      key = that.uniqueAttributes[i];
+      val = doc[that.uniqueAttributes[i]];
+      pair[key] = val;
+      opts.where = pair;
+
+      // need to somehow force this to be synchronous
+      // or i'm going about it completely wrong
+      that.db.collection(that.table, function(error, collection) {
+        collection.find(opts.where).toArray(function(error, docs){
+          if (docs.length > 0) {
+            that.errors.push("An item with '" + val + "' for attribute '" + key + "' already exists.");
+          }
+        });
+      });
+    }
+  };
 
   // validations
-  that.addValidation = function(rule) {
+  that.validates = function(rule) {
     that.validations.push(rule);
   };
 
-
+  that.validatesUniquenessOf = function(attr) {
+    that.uniqueAttributes.push(attr); 
+  };
   
   return that;
 };
