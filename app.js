@@ -30,7 +30,7 @@ app.resources = function(name, controller) {
   this.get("/" + name, controller().index);
   this.get("/" + name + "/new", controller().new);
   this.post("/" + name, controller().create);
-  this.get("/" + name + "/show/:id", controller().show);
+  this.get("/" + name + "/:id", controller().show);
   this.get("/" + name + "/edit/:id", controller().edit);
   this.post("/" + name + "/update", controller().update);
   this.get("/" + name + "/destroy/:id", controller().destroy);

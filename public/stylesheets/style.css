@@ -35,3 +35,9 @@ h1 {
 #articles .article .body {
   background-color: #ffa;
 }
+ul.errors {
+  list-style: none;
+}
+ul.errors li {
+  color: #f00;
+}

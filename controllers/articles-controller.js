@@ -6,9 +6,11 @@ var ArticlesController = function() {
   controller.viewsPath = "articles/";
    
 
+  // GET /articles
   controller.index = function(req, res) {
+    // sort createdAt desc
     var opts = {
-      order: {createdAt: -1}
+      sort: {createdAt: -1}
     };
     Article().all(opts, function(result) {
       res.render(viewPath('index'), { 
@@ -17,6 +19,7 @@ var ArticlesController = function() {
     });
   };
 
+  // GET /articles/:id
   controller.show = function(req, res) {
     if (req.params.id) {
       Article().find(req.params.id, function(result) {
@@ -30,13 +33,14 @@ var ArticlesController = function() {
         }
       });
     };
-
   };
 
+  // GET /articles/new
   controller.new = function(req, res) {
-    res.render(viewPath('new'), {});
+    res.render(viewPath('new'), {errors: [], article: {title: "", content: ""}});
   };
 
+  // GET /articles/edit/:id
   controller.edit = function(req, res) {
     if (req.params.id) {
       Article().find(req.params.id, function(result) {
@@ -52,8 +56,9 @@ var ArticlesController = function() {
     };
   };
 
+  // POST /articles/update
   controller.update = function(req, res) {
-    var article = Article().new();
+    var article = {};
     var title = req.body.title;
     var content = req.body.content;
     var _id = req.body.id;
@@ -65,29 +70,31 @@ var ArticlesController = function() {
       Article().update(article, function(error, results) {
         console.log("error: ", error);
         console.log("reults: ", results);
-        res.redirect("/articles/show/" + article._id);
+        res.redirect("/articles/" + article._id);
       });
     } else {
       console.log("didn't update doc");
     }
   };
 
+  // POST /articles
   controller.create = function(req, res) {
-    var article = Article().new();
+    var article = {};
     var title = req.body.title;
     var content = req.body.content;
 
-    if (title && content) {
-      article.title = title;
-      article.content = content;
-      Article().save(article, function(error, result) {
-        res.redirect('/articles/show/' + article._id);
-      });
-    } else {
-      res.redirect("/articles/new");
-    }
+    article.title = title;
+    article.content = content;
+    Article().save(article, function(errors, result) {
+      if (errors) {
+        res.render(viewPath("new"), {errors: errors.split("\n"), article: article});
+      } else {
+        res.redirect('/articles/' + article._id);
+      }
+    });
   };
 
+  // GET /articles/destroy/:id
   controller.destroy = function(req, res) {
     if (req.params.id) {
       Article().find(req.params.id, function(result) {

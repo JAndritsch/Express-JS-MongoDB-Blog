@@ -9,6 +9,8 @@ var MongoModel = function() {
   var that = {};
   that.db = Connection().db();
   that.objectID = Connection().ObjectID;
+  that.validations = [];
+  that.errors = [];
 
   /*
   * opts types:
@@ -42,13 +44,17 @@ var MongoModel = function() {
   that.save = function(doc, callback) {
     doc.createdAt = new Date();
     that.db.collection(that.table, function(error, collection){
-      collection.insert([doc], function(error, results){
-        callback(error, results);
-      });
+      if (that.isValid(doc)) {
+        collection.insert([doc], function(error, results){
+          callback(error, results);
+        });
+      } else {
+        callback(that.errors.join("\n"), null);
+      }
     });
   };
 
-  // Update the doc - NOT WORKING YET, need to add callback 
+  // Update the doc - NOT WORKING YET 
   that.update = function(doc, callback) {
     doc.updatedAt = new Date();
     that.db.collection(that.table, function(error, collection) {
@@ -77,6 +83,29 @@ var MongoModel = function() {
     });
   };
 
+  that.isValid = function(doc) {
+    var currentRule;
+    var evalString;
+    for (var i = 0; i < that.validations.length; i++) {
+      currentRule = that.validations[i]; 
+      evalString = "doc." + currentRule; 
+      if (!eval(evalString)) {
+        that.errors.push("Validation failed on '" + evalString + "'");
+      }
+    }
+    if (that.errors.length == 0) {
+      return true;
+    }
+    return false;
+  };
+
+  // validations
+  that.addValidation = function(rule) {
+    that.validations.push(rule);
+  };
+
+
+  
   return that;
 };
 

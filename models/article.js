@@ -2,15 +2,12 @@ var MongoModel = require("./mongo-model.js").MongoModel;
 
 var Article = function() {
 
-  var that = MongoModel();
+  var that = new MongoModel();
   that.table = 'articles';
 
-  that.new = function() {
-    return {
-      title: null,
-      content: null
-    };
-  };
+  // setup validations
+  that.addValidation("title.length > 0");
+  that.addValidation("content.length > 0");
 
   return that;
 };
