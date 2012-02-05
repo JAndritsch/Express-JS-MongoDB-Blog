@@ -1,8 +1,8 @@
 var Connection = require("../config/database.js").Connection;
 
 /* This is the wrapper class for all models 
-*  It provides the basic default CRUD tasks that can
-*  be imported into every other model.
+*  It provides the basic default CRUD tasks that are
+*  imported into every other model.
 * */
 var MongoModel = function() {
 
@@ -12,6 +12,10 @@ var MongoModel = function() {
   that.validations = [];
   that.uniqueAttributes = [];
   that.errors = [];
+
+  that.new = function() {
+    return that.attributes;
+  };
 
   /*
   * opts types:
@@ -44,6 +48,9 @@ var MongoModel = function() {
   // Save the new doc
   that.save = function(doc, callback) {
     doc.createdAt = new Date();
+    if (that.beforeCreate != undefined) {
+      that.beforeCreate();
+    }
     that.db.collection(that.table, function(error, collection){
       if (that.validationsPass(doc)) {
         collection.insert([doc], function(error, results){
@@ -107,28 +114,26 @@ var MongoModel = function() {
   };
 
   that.runUniquenessCheck = function(doc) {
+    var opts = {};
+    var key, val;
+    var pair = {};
     for (var i = 0; i < that.uniqueAttributes.length; i++) {
-      var opts = {};
-      var key, val;
-      var pair = {};
-      key = that.uniqueAttributes[i];
+     key = that.uniqueAttributes[i];
       val = doc[that.uniqueAttributes[i]];
       pair[key] = val;
       opts.where = pair;
-
       // need to somehow force this to be synchronous
       // or i'm going about it completely wrong
       that.db.collection(that.table, function(error, collection) {
         collection.find(opts.where).toArray(function(error, docs){
           if (docs.length > 0) {
-            that.errors.push("An item with '" + val + "' for attribute '" + key + "' already exists.");
+            that.errors.push("An entry with '" + key + "' = '" + val + "' already exists in '" + that.table + "'");
           }
         });
       });
     }
   };
 
-  // validations
   that.validates = function(rule) {
     that.validations.push(rule);
   };

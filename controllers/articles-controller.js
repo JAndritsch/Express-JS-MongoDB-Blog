@@ -58,7 +58,7 @@ var ArticlesController = function() {
 
   // POST /articles/update
   controller.update = function(req, res) {
-    var article = {};
+    var article = Article().new();
     var title = req.body.title;
     var content = req.body.content;
     var _id = req.body.id;
@@ -79,7 +79,7 @@ var ArticlesController = function() {
 
   // POST /articles
   controller.create = function(req, res) {
-    var article = {};
+    var article = Article().new();
     var title = req.body.title;
     var content = req.body.content;
 
